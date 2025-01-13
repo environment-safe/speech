@@ -4,7 +4,7 @@ import * as mod from 'module';
 //import * as path from 'path';
 let internalRequire = null;
 if(typeof require !== 'undefined') internalRequire = require;
-const ensureRequire = ()=> (!internalRequire) && (internalRequire = mod.createRequire(import.meta.url));
+let ensureRequire = null;
 
 let Synthesis = null;
 let TextSynthesis = null;
@@ -88,8 +88,8 @@ if(isBrowser || isJsDom){
     });
     
 }else{
+    if(!ensureRequire) ensureRequire = ()=> (!internalRequire) && (internalRequire = mod.createRequire(import.meta.url));
     ensureRequire();
-    //let importingSynth = null;
     const Speaker = internalRequire('speaker');
     let listVoices = tts.getVoiceList;
     Object.defineProperty(Speech, 'ready', {
@@ -129,9 +129,10 @@ if(isBrowser || isJsDom){
         });
         await new Promise((resolve)=>{
             speaker.on('end', ()=>{
-                resolve();
+                //resolve();
             });
-            speaker.write(converted);
+            speaker.end(converted);
+            resolve();
         });
     };
     

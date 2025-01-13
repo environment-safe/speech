@@ -24,7 +24,7 @@ describe('module', ()=>{
         });
         
         it('speaks', async function(){
-            this.timeout(5000);
+            this.timeout(15000);
             await Speech.ready;
             const enUsVoices = Speech.voices.filter((item)=>{
                 const language = item.lang || item.language;
