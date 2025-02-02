@@ -1,13 +1,10 @@
 @environment-safe/speech
 ========================
-Text to Speech and speech recognition in node and the browser (currently only supports OSX in node, but others are coming).
+Text to Speech and speech recognition in node and the browser. Supports native STT/TTS where possible, falls back to local support or native browser support where appropriate.
 
 Usage
 -----
-
-First off you must stub `@echogarden/macos-native-tts` in the browser (you can point it at anything, I recommend something that is already loaded).
-
-text to speech is just: 
+In node this looks like:
 ```js
 import { Speech } from '@environment-safe/speech';
 (async ()=>{
@@ -15,20 +12,38 @@ import { Speech } from '@environment-safe/speech';
     const voice = Speech.voices[0].name;
     await Speech.speak('I have something to say', { voice });
 })();
+// node.js STT support is still TBD
 ```
-(In the browser, this must occur on a execution context initiated by a user action)
-
-speech to text is (currently only working in the browser):
+In the browser, this must occur on an execution context initiated by a user action, like:
 ```js
 import { Speech } from '@environment-safe/speech';
-(async ()=>{
-    await Speech.ready;
+const el = document.getElementById('element-id');
+el.addEventListener('click', async ()=>{
+    const spoken = await Speech.hear();
+    //do something
+});
+//OR
+el.addEventListener('click', async ()=>{
     const voice = Speech.voices[0].name;
-    await Speech.listen((spokenString)=>{
-        //do something with the heard text
-    }, { });
-})();
+    await Speech.speak('I have something to say', { voice });
+    //do something
+});
 ```
+
+=== Engine Type Support
+
+| engine type | local | no model | TTS | STT | native |
+|-------------|-------|----------|-----|-----|--------|
+| browser     |  ✅   |   ✅     | ✅  |  ✅ |   ✅  |
+| whisper     |  ✅   |   ❌     | ❌  |  ✅ |   ❌  |
+| mac-os-x    |  ✅   |   ✅     | ✅  |  ❌ |   ✅  |
+| windows     |  ✅   |   ✅     | ✅  |  ❌ |   ✅  |
+| sherpa-onnx |  ✅   |   ❌     | ✅  |  ✅ |   ❌  |
+| node        |  ✅   |   ✅     | ✅  |  ❌ |   ❌  |
+
+Supported STT engines are: `browser`, `sherpa-onnx` and `whisper`. Supported TTS engines are: `browser`, `mac-os-x`, `windows`, `node`, and `sherpa-onnx`. Autodetection prefers native, local solutions.
+
+Outside the browser getting command line access to native STT is difficult, so the STT options in node are currently bulky and limited. This should change over time.
 
 Testing
 -------

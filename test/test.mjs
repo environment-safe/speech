@@ -16,11 +16,10 @@ describe('module', ()=>{
         it('lists native voices', async ()=>{
             should.exist(Speech);
             should.exist(Speech.ready);
+            await Speech.ready;
             should.exist(Speech.speak);
             should.exist(Speech.voices);
-            await Speech.ready;
             Speech.voices.length.should.be.above(2);
-            console.log(Speech.voices);
         });
         
         it('speaks', async function(){
@@ -30,9 +29,22 @@ describe('module', ()=>{
                 const language = item.lang || item.language;
                 return language.toLowerCase() === 'en-us';
             });
-            console.log(enUsVoices);
             const voice = enUsVoices[0].identifier;
             await Speech.speak('I am testing tee tee ess', {
+                voice
+            });
+        });
+        
+        it.skip('speaks from an instance', async function(){
+            this.timeout(15000);
+            const thisSpeech = new Speech({type: 'sherpa-onnx'});
+            await thisSpeech.ready;
+            const enUsVoices = thisSpeech.voices.filter((item)=>{
+                const language = item.lang || item.language;
+                return language.toLowerCase() === 'en-us';
+            });
+            const voice = enUsVoices[0].identifier;
+            await thisSpeech.speak('I am testing tee tee ess', {
                 voice
             });
         });

@@ -1,6 +1,6 @@
 {
     "name": "@environment-safe/speech",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "type": "module",
     "main": "dist/index.mjs",
     "module": "src/index.mjs",
@@ -104,7 +104,17 @@
     },
     "dependencies": {
         "@echogarden/macos-native-tts": "^0.1.0",
+        "@echogarden/windows-media-tts": "^0.1.0",
+        "@environment-safe/runtime-context": "^0.0.1",
+        "audiobuffer-to-wav": "^1.0.0",
         "browser-or-node": "^2.1.1",
-        "speaker": "^0.5.5"
+        "naudiodon": "^2.3.6",
+        "node-mic": "^1.0.1",
+        "sherpa-onnx": "^1.10.40",
+        "speaker": "^0.5.5",
+        "stream-buffers": "^3.0.3",
+        "text2wav": "^0.0.14",
+        "tmp": "^0.2.3",
+        "whisper-node": "^1.1.1"
     }
 }

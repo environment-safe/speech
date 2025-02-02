@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="icon" href="/favicon.ico">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Loading...</title>
+        <style>
+          body{
+            padding: 0px;
+            margin: 0px;
+            width:100%; 
+            height: 100%;
+            overflow: hidden;
+          }
+          #forkme{
+              position: absolute;
+              top: 0px;
+              right: 0px;
+              display: block;
+          }
+        </style>
+        <script type="importmap">{ "imports" :{
+            "browser-or-node":"https://unpkg.com/browser-or-node@2.1.1/src/index.js", 
+            "@environment-safe/package" : "https://unpkg.com/@environment-safe/package@0.1.3/src/index.mjs",
+            "@environment-safe/runtime-context" : "https://unpkg.com/@environment-safe/runtime-context@0.0.1/src/index.mjs",
+            "module": "https://unpkg.com/browser-or-node@2.1.1/src/index.js",
+            "node:events": "https://unpkg.com/extended-emitter@1.3.2/node-events.mjs",
+            "@echogarden/macos-native-tts":"https://unpkg.com/browser-or-node@2.1.1/src/index.js",
+            "@environment-safe/speech" : "./src/index.mjs",
+            "path": "https://unpkg.com/browser-or-node@2.1.1/src/index.js"
+        }}</script>
+        <!--<script
+            type="module"
+            src="https://cdn.jsdelivr.net/gh/zerodevx/zero-md@2/dist/zero-md.min.js"
+          ></script>-->
+        <script type="module">
+            import { Speech } from '@environment-safe/speech';
+            let voices = null;
+            const handleVoices = ()=>{
+                if(!voices){
+                    const newVoices = Speech.voices;
+                    if(newVoices.length){
+                        console.log(newVoices)
+                        voices = newVoices;
+                    }
+                }
+            };
+            
+            document.body.addEventListener('mousemove', (e)=>{
+                if( !(voices && voices.length) ){
+                    loadElements();
+                }
+            })
+            
+            const loadElements = ()=>{
+                handleVoices();
+                let input = null;
+                const container = document.getElementById('voices');
+                if(voices){
+                    console.log('appending', voices.length, container);
+                    for(let lcv=0; lcv < voices.length; lcv++){
+                        input = document.createElement('option');
+                        input.setAttribute('value', Speech.voices[lcv].voiceURI);
+                        input.innerText = Speech.voices[lcv].name;
+                        container.appendChild(input);
+                    }
+                }
+            };
+            
+            window.onLoad = ()=>{
+                const container = document.getElementById('voices');
+                container.addEventListener('click', (e)=>{
+                    if( !(voices && voices.length) ){
+                        loadElements();
+                    }
+                })
+            }
+            
+            window.doSpeak = async ()=>{
+                await Speech.ready;
+                if(!voices) await loadElements();
+                const speakableEl = document.getElementById('speakable');
+                const container = document.getElementById('voices');
+                const voice = voices.filter((voice)=>{
+                    return voice.voiceURI === container.value;
+                })[0];
+                await Speech.speak(speakableEl.value, { voice });
+            };
+            
+            window.doListen = async ()=>{
+                await Speech.ready;
+                const spoken = await Speech.hear();
+                alert(spoken);
+            };
+        </script>
+    </head>
+    <body onload="window.onLoad()">
+        <textarea id="speakable">I have something to say</textarea><br/>
+        <label for="voice">Voice</label><select id="voices" name="voice"><select><br/>
+        <button onclick="window.doSpeak()">Speak</button>
+        <button onclick="window.doListen()">Listen</button>
+    </body>
+</html>
