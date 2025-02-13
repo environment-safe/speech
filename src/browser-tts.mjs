@@ -24,8 +24,8 @@ export const speak = async (text, options={})=>{
     if(options.voice) speakable.voice = options.voice;
     if(options.pitch) speakable.pitch = options.pitch;
     if(options.rate) speakable.rate = options.rate;
-    window.speechSynthesis.speak(speakable);
     await new Promise((resolve)=>{
         speakable.onend = resolve;
+        window.speechSynthesis.speak(speakable);
     });
 };
