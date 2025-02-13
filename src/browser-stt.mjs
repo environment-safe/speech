@@ -21,11 +21,10 @@ export const hear = async ()=>{
             
             // This runs when the speech recognition service returns result
             recognition.onresult = function(event) {
-                console.log(event);
-                const transcript = event.results[0][0].transcript;
+                const query = event.results[0][0].transcript;
                 //const confidence = event.results[0][0].confidence;
                 recognition.stop();
-                resolve(transcript);
+                resolve({query});
             };
             
             // start recognition

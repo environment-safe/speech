@@ -50,10 +50,12 @@ export class Speech{
     }
     
     async speak(text){
+        await this.ready;
         return await this.tts.speak(text);
     }
     
     async hear(){
+        await this.ready;
         return await this.stt.hear();
     }
     
